@@ -33,23 +33,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Color(0xFF6F4A32),
+        foregroundColor: Color(0xFFB07A4D),
         backgroundColor: Color(0xFFFFFFFF),
         title: Text(widget.title, style: TextStyle(color: Color(0xFF6F4A32))),
         centerTitle: false,
         elevation: 0,
         shadowColor: null,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              '$selectedIdx',
-            ),
-          ],
-        ),
-      ),
+      body: Container(child: getPage()),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Color(0xFF6F4A32),
         unselectedItemColor: Color(0xFF222222),
@@ -83,5 +74,17 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
     );
+  }
+
+  Widget getPage() {
+    if(selectedIdx == 0) {
+      return getMainPage();
+    } else {
+      return Container();
+    }
+  }
+
+  Widget getMainPage() {
+    return Container();
   }
 }
