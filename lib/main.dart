@@ -148,90 +148,8 @@ class _MyHomePageState extends State<MyHomePage> {
               snap: false,
               floating: false,
               expandedHeight: 200,
-              flexibleSpace: Stack(
-                children: [
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      height: 200.0,
-                      viewportFraction: 1,
-                      initialPage: 0,
-                      onPageChanged: (idx, reason) {
-                        setState(() {
-                          carouselPage = idx;
-                        });
-                      }
-                    ),
-                    items: banners.map((banner) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Container(
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage(banner.image),
-                                    fit: BoxFit.cover
-                                ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                      margin: EdgeInsets.only(left: 37),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .start,
-                                        children: [
-                                          Container(height: 40,),
-                                          Text(banner.title,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              height: 1.44,
-                                            ),),
-                                          Container(height: 46,),
-                                          Text(banner.duration,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                height: 1.36,
-                                              )
-                                          )
-                                        ],
-                                      )
-                                  ),
-                                ],
-                              )
-                          );
-                        },);
-                    }).toList(),
-                  ),
-                  Positioned(
-                    child: Container(
-                      child: Text("${carouselPage + 1} / ${banners.length}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            height: 1.2,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          )),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 14),
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(
-                            226, 226, 226, 0.5),
-                        borderRadius: BorderRadius.circular(
-                            24),
-                      ),
-                    ),
-                    bottom: 20,
-                    right: 20,
-                  ),
-                ]
-              )
+              toolbarHeight: 0,
+              flexibleSpace: CarouselSpace(),
             ),
             SliverAppBar(
               pinned: true,
@@ -427,4 +345,128 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             );
     }
+}
+
+class CarouselSpace extends StatefulWidget {
+  CarouselSpace({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  _CarouselSpaceState createState() => _CarouselSpaceState();
+}
+
+class _CarouselSpaceState extends State<CarouselSpace> {
+  int carouselPage = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, c) {
+      final settings = context
+          .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
+      final deltaExtent = settings!.maxExtent - settings.minExtent;
+      final t = (1.0 - (settings.currentExtent - settings.minExtent) / deltaExtent)
+            .clamp(0.0, 1.0);
+      final fadeStart = 0.3;
+      const fadeEnd = 1.0;
+      final opacity = 1.0 - Interval(fadeStart, fadeEnd).transform(t);
+
+      return Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+          ),
+          Opacity(
+            opacity: opacity,
+            child: Stack(
+                children: [
+                  CarouselSlider(
+                    options: CarouselOptions(
+                        height: 200.0,
+                        viewportFraction: 1,
+                        initialPage: 0,
+                        onPageChanged: (idx, reason) {
+                          setState(() {
+                            carouselPage = idx;
+                          });
+                        }
+                    ),
+                    items: banners.map((banner) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Container(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(banner.image),
+                                    fit: BoxFit.cover
+                                ),
+                              ),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                      margin: EdgeInsets.only(left: 37),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Container(height: 40,),
+                                          Text(banner.title,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              height: 1.44,
+                                            ),),
+                                          Container(height: 46,),
+                                          Text(banner.duration,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                height: 1.36,
+                                              )
+                                          )
+                                        ],
+                                      )
+                                  ),
+                                ],
+                              )
+                          );
+                        },);
+                    }).toList(),
+                  ),
+                  Positioned(
+                    child: Container(
+                      child: Text("${carouselPage + 1} / ${banners.length}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            height: 1.2,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          )),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(
+                            226, 226, 226, 0.5),
+                        borderRadius: BorderRadius.circular(
+                            24),
+                      ),
+                    ),
+                    bottom: 20,
+                    right: 20,
+                  ),
+                ]
+            ),
+          ),
+        ],
+      );
+    });
+  }
 }
