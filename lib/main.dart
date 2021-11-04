@@ -80,6 +80,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int selectedIdx = 0;
+  int carouselPage = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -147,84 +148,90 @@ class _MyHomePageState extends State<MyHomePage> {
               snap: false,
               floating: false,
               expandedHeight: 200,
-              flexibleSpace: CarouselSlider(
-                options: CarouselOptions(
-                  height: 200.0,
-                  viewportFraction: 1,
-                ),
-                items: banners.map((banner) {
-                  int idx = banners.indexOf(banner);
-                  int length = banners.length;
-
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage(banner.image),
-                                fit: BoxFit.cover
-                            ),
-                          ),
-                          child: Stack(
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.only(left: 37),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
-                                    children: [
-                                      Container(height: 40,),
-                                      Text(banner.title,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          height: 1.44,
-                                        ),),
-                                      Container(height: 46,),
-                                      Text(banner.duration,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            height: 1.36,
-                                          )
-                                      )
-                                    ],
-                                  )
-                              ),
-                              Positioned(
-                                child: Container(
-                                  child: Text("${idx + 1} / $length",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        height: 1.2,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                      )),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 5, horizontal: 14),
-                                  decoration: BoxDecoration(
-                                    color: Color.fromRGBO(
-                                        226, 226, 226, 0.5),
-                                    borderRadius: BorderRadius.circular(
-                                        24),
-                                  ),
+              flexibleSpace: Stack(
+                children: [
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      height: 200.0,
+                      viewportFraction: 1,
+                      initialPage: 0,
+                      onPageChanged: (idx, reason) {
+                        setState(() {
+                          carouselPage = idx;
+                        });
+                      }
+                    ),
+                    items: banners.map((banner) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Container(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(banner.image),
+                                    fit: BoxFit.cover
                                 ),
-                                bottom: 20,
-                                right: 20,
+                              ),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                      margin: EdgeInsets.only(left: 37),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Container(height: 40,),
+                                          Text(banner.title,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              height: 1.44,
+                                            ),),
+                                          Container(height: 46,),
+                                          Text(banner.duration,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                height: 1.36,
+                                              )
+                                          )
+                                        ],
+                                      )
+                                  ),
+                                ],
                               )
-                            ],
-                          )
-                      );
-                    },
-                  );
-                }).toList(),
-              ),
+                          );
+                        },);
+                    }).toList(),
+                  ),
+                  Positioned(
+                    child: Container(
+                      child: Text("${carouselPage + 1} / ${banners.length}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            height: 1.2,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          )),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(
+                            226, 226, 226, 0.5),
+                        borderRadius: BorderRadius.circular(
+                            24),
+                      ),
+                    ),
+                    bottom: 20,
+                    right: 20,
+                  ),
+                ]
+              )
             ),
             SliverAppBar(
               pinned: true,
